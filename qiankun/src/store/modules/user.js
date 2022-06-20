@@ -6,23 +6,26 @@ import {
   setUserInfo,
   removeUserInfo
 } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import router, { resetRouter } from '@/router'
 import {
-  login,
-  logout,
+  // login,
+  // logout,
   fetchRefreshToken,
   fetchUserInfo
 } from '@/api/user'
+import qkActions from '@/shared/actions'
 
 const state = {
   token: getToken(),
-  userInfo: getUserInfo()
+  userInfo: getUserInfo(),
+  roles: [] // 默认admin，不做权限控制
 }
 
 const mutations = {
   SET_TOKEN: (state, data = {}) => {
     const { accessToken = '', expiresIn = 7 } = data
     state.token = accessToken
+    qkActions.setGlobalState({ token: accessToken })
     if (accessToken) {
       setToken(accessToken, expiresIn)
     } else {
@@ -33,48 +36,58 @@ const mutations = {
     state.userInfo = data
     if (data) {
       setUserInfo(data)
+      qkActions.setGlobalState({ userInfo: data })
     } else {
       removeUserInfo()
     }
+  },
+  SET_ROLES: (state, roles) => {
+    state.roles = roles
+    qkActions.setGlobalState({ roles })
   }
 }
 
 const actions = {
   // user login
-  loginAction ({ commit, dispatch }, loginFormData) {
-    const { username, password } = loginFormData
-    return new Promise((resolve, reject) => {
-      login({
-        username: username.toLowerCase(),
-        password: password
-      }).then(async response => {
-        const { data = {} } = response
-        commit('SET_TOKEN', data)
-        // 获取用户信息和配置
-        try {
-          await dispatch('getInfo')
-        } catch (error) {
-          return reject(error)
-        }
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
+  login ({ commit, dispatch }, loginFormData) {
+    // const { username, password } = loginFormData
+    // return new Promise((resolve, reject) => {
+    //   login({
+    //     username: username.toLowerCase(),
+    //     password: password
+    //   }).then(async response => {
+    //     const { data = {} } = response
+    const data = {
+      accessToken: 'testToken'
+    }
+    commit('SET_TOKEN', data)
+    // 获取用户信息和配置
+    //     try {
+    //       await dispatch('getInfo')
+    //     } catch (error) {
+    //       return reject(error)
+    //     }
+    //     resolve(data)
+    //   }).catch(error => {
+    //     reject(error)
+    //   })
+    // })
   },
   // user logout
-  logoutAction ({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout({
-        token: state.token
-      }).then(() => {
-        commit('SET_TOKEN', {})
-        resetRouter()
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
+  logout ({ commit, state }) {
+    // return new Promise((resolve, reject) => {
+    //   logout({
+    //     token: state.token
+    //   }).then(() => {
+    commit('SET_TOKEN', {})
+    commit('SET_ROLES', [])
+    resetRouter()
+    router.push('/login')
+    //     resolve()
+    //   }).catch(error => {
+    //     reject(error)
+    //   })
+    // })
   },
   // Token refresh
   tokenRefresh ({ commit, state, dispatch }) {
@@ -120,6 +133,7 @@ const actions = {
     return new Promise(resolve => {
       commit('SET_TOKEN', {})
       commit('SET_USERINFO', null)
+      commit('SET_ROLES', [])
       resolve()
     })
   }

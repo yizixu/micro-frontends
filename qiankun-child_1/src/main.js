@@ -41,9 +41,11 @@ export async function bootstrap () {
  */
 export async function mount (props) {
   console.log('[vue] props from main framework', props)
-  Vue.prototype.$onGlobalStateChange = props.onGlobalStateChange
-  Vue.prototype.$setGlobalState = props.setGlobalState
   render(props)
+  actions.onGlobalStateChange(state => {
+    console.log(`子应用${props.name}收到：`, state)
+    store.commit('SET_PARENT_PROPS', state)
+  }, true)
 }
 
 /**

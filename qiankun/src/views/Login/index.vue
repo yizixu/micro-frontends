@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import actions from '@/shared/actions'
 import LangSelect from '@/components/LangSelect'
 export default {
   components: {
@@ -30,20 +29,40 @@ export default {
       formData: {
         username: '',
         password: ''
-      }
+      },
+      redirect: '',
+      otherQuery: {}
+    }
+  },
+  watch: {
+    $route: {
+      handler: function (route) {
+        const query = route.query
+        if (query) {
+          this.redirect = query.redirect
+          this.otherQuery = this.getOtherQuery(query)
+        }
+      },
+      immediate: true
     }
   },
   methods: {
     login () {
       this.loading = true
-      setTimeout(() => {
+      setTimeout(async () => {
         this.loading = false
-        actions.setGlobalState({ token: 'testToken' })
-        this.$router.push({
-          name: 'app1'
-        })
+        await this.$store.dispatch('user/login', this.formData)
+        this.$router.push({ path: this.redirect || '/', query: this.otherQuery }).catch(() => {})
         // todo
       }, 2000)
+    },
+    getOtherQuery (query) {
+      return Object.keys(query).reduce((acc, cur) => {
+        if (cur !== 'redirect') {
+          acc[cur] = query[cur]
+        }
+        return acc
+      }, {})
     }
   }
 }

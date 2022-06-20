@@ -6,7 +6,7 @@ const resolve = (dir) => {
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
-    port: '8080',
+    port: '9527',
     headers: {
       'Access-Control-Allow-Origin': '*'
     }

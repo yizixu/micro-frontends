@@ -33,19 +33,22 @@ export default {
     LangSelect
   },
   mounted () {
-    if (!window.qiankunStarted) {
-      window.qiankunStarted = true
-      startQiankun(startConfig)
-      this.stateChange()
-    }
+    this.initQiankun()
   },
   methods: {
+    initQiankun () {
+      if (!window.qiankunStarted) {
+        window.qiankunStarted = true
+        startQiankun(startConfig)
+        this.stateChange()
+      }
+    },
     stateChange () {
     // 注册一个观察者函数
       actions.onGlobalStateChange((state, prevState) => {
-      // state: 变更后的状态; prevState: 变更前的状态
-        console.log('主应用观察者：改变前的值为 ', prevState)
-        console.log('主应用观察者：改变后的值为 ', state)
+        console.log(this.$route.path)
+        // state: 变更后的状态; prevState: 变更前的状态
+        console.log('主应用收到：', state)
       })
     }
   }

@@ -2,7 +2,9 @@ import { initGlobalState } from 'qiankun'
 
 const initialState = {
   message: '',
-  token: ''
+  token: '',
+  roles: [],
+  userInfo: {}
 }
 const actions = initGlobalState(initialState)
 

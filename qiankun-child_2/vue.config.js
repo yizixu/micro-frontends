@@ -3,7 +3,7 @@ const packageName = require('./package.json').name;
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
-    port: '8082',
+    port: '9529',
     headers: {
       'Access-Control-Allow-Origin': '*'
     }

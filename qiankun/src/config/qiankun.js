@@ -7,13 +7,13 @@ export const startConfig = {
 export const appConfig = [
   {
     name: 'vue app 1', // app name registered
-    entry: '//localhost:8081',
+    entry: '//localhost:9528',
     container: '#app-child_1_container',
     activeRule: '/app1'
   },
   {
     name: 'vue app 2',
-    entry: '//localhost:8082',
+    entry: '//localhost:9529',
     container: '#app-child_2_container',
     activeRule: '/app2'
   }

@@ -1,46 +1,39 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import IndexView from '../views/IndexView.vue'
-import loginView from '../views/Login/index.vue'
+// import IndexView from '@/views/IndexView.vue'
+import loginView from '@/views/Login/index.vue'
+
+import app1Routes from './modules/app1'
+import app2Routes from './modules/app2'
 
 Vue.use(VueRouter)
 
-const routes = [
+export const constantRoutes = [
+  {
+    path: '/redirect/:path(.*)',
+    component: () => import('@/views/Redirect/index')
+  },
   {
     path: '/login',
     name: 'login',
     component: loginView
-  },
+  }
+]
+
+export const asyncRoutes = [
   {
     path: '/',
-    component: IndexView
+    name: 'index',
+    redirect: '/app1'
   },
-  {
-    path: '/app1/*',
-    name: 'app1Other',
-    component: IndexView
-  },
-  {
-    path: '/app1',
-    name: 'app1',
-    component: IndexView
-  },
-  {
-    path: '/app2/*',
-    name: 'app2Other',
-    component: IndexView
-  },
-  {
-    path: '/app2',
-    name: 'app2',
-    component: IndexView
-  }
+  ...app1Routes,
+  ...app2Routes
 ]
 
 const createRouter = () => new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes: constantRoutes
 })
 const router = createRouter()
 
